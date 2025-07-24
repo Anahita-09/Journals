@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ana's Journal</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Open+Sans:wght@400;700&family=Pacifico&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">Ana's Journal</div>
+    <nav class="topnav">
+      <a href="journal.html" class="nav-link active">Journal</a>
+      <a href="entries.html" class="nav-link">Past Entries</a>
+    </nav>
+  </header>
+  <main class="journal-main">
+    <section class="journal-editor section" id="journal">
+      <input type="text" id="entry-title" class="entry-title-input" placeholder="Title">
+      <div class="editor-toolbar toolbar-row-1">
+        <select id="entry-mood">
+          <option value="">Tags</option>
+          <option value="happy">😊 Happy</option>
+          <option value="sad">😢 Sad</option>
+          <option value="grateful">😌 Grateful</option>
+          <option value="stressed">😤 Stressed</option>
+          <option value="excited">🤩 Excited</option>
+          <option value="calm">🌿 Calm</option>
+        </select>
+        <select id="font-family">
+          <option value="Quicksand">Quicksand</option>
+          <option value="Open Sans">Open Sans</option>
+          <option value="Pacifico">Pacifico</option>
+          <option value="Roboto">Roboto</option>
+        </select>
+        <select id="font-size">
+          <option value="16px">16px</option>
+          <option value="18px">18px</option>
+          <option value="20px">20px</option>
+          <option value="24px">24px</option>
+          <option value="28px">28px</option>
+        </select>
+        <input type="color" id="font-color" value="#7b5e57">
+        <button id="bold-btn" title="Bold"><b>B</b></button>
+        <button id="italic-btn" title="Italic"><i>I</i></button>
+        <button id="underline-btn" title="Underline"><u>U</u></button>
+      </div>
+      <div class="editor-toolbar toolbar-row-2">
+        <label class="file-label">
+          <input type="file" id="image-upload" accept="image/*" multiple>
+          <span>Choose Images</span>
+        </label>
+      </div>
+      <div id="editor" class="editor-area" contenteditable="true" spellcheck="true" placeholder="Start writing your thoughts..."></div>
+      <div class="editor-images" id="editor-images"></div>
+      <div class="editor-actions">
+        <span id="word-count">0 words</span>
+        <button id="save-btn" class="btn btn-primary">Save Entry</button>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html> 
