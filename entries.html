@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ana's Journal - Past Entries</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Open+Sans:wght@400;700&family=Pacifico&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo" style="font-family: 'Pacifico', cursive; font-size: 2.1rem; letter-spacing: 1px;">Ana's Journal</div>
+    <nav class="topnav">
+      <a href="journal.html" class="nav-link">Journal</a>
+      <a href="entries.html" class="nav-link active">Timeline</a>
+      <a href="calendar.html" class="nav-link">Calendar</a>
+      <a href="about.html" class="nav-link">About</a>
+    </nav>
+  </header>
+  <main class="journal-main">
+    <section class="entries-section section" id="entries">
+      <h2>Timeline</h2>
+      <form id="search-form" class="entries-search">
+        <input type="text" id="search-keyword" placeholder="Search by keyword...">
+        <select id="search-mood">
+          <option value="">Any Tag</option>
+          <option value="academic">🎓 Academic</option>
+          <option value="fun">🎉 Fun</option>
+          <option value="clubs">🤝 Clubs</option>
+          <option value="family">👨‍👩‍👧‍👦 Family</option>
+          <option value="other">✨ Other</option>
+        </select>
+        <button type="submit" class="btn">Search</button>
+        <button id="show-trash-btn" type="button" class="btn">Trash</button>
+      </form>
+      <div id="entries-list" class="entries-list"></div>
+    </section>
+    <div id="trash-modal" class="modal hidden">
+      <div class="modal-content" style="max-width:600px;">
+        <h3>Trash</h3>
+        <div id="trash-list"></div>
+        <button id="close-trash" class="btn" style="margin-top:1.2rem;">Close</button>
+      </div>
+    </div>
+    <div id="customize-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Customize Your Journal</h3>
+        <label><input type="checkbox" id="dark-mode-toggle"> Dark Mode</label>
+        <label>Theme:
+          <select id="theme-select">
+            <option value="brown">Brown</option>
+            <option value="sepia">Sepia</option>
+            <option value="cream">Cream</option>
+          </select>
+        </label>
+        <label>Font:
+          <select id="font-select">
+            <option value="Quicksand">Quicksand</option>
+            <option value="Open Sans">Open Sans</option>
+            <option value="Pacifico">Pacifico</option>
+            <option value="Roboto">Roboto</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="distraction-free-toggle"> Distraction-Free Mode</label>
+        <button id="close-customize" class="btn">Close</button>
+      </div>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html> 
