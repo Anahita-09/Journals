@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ana's Journal - Calendar</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Open+Sans:wght@400;700&family=Pacifico&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { background: #f8f8f8; }
+    .calendar-container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 12px #0001; padding: 32px; }
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+    .calendar-day, .calendar-cell { padding: 8px; text-align: center; font-weight: bold; min-width: 0; }
+    .calendar-day { background: #eee; border-radius: 8px; }
+    .calendar-cell { min-height: 90px; background: #e2b4a6; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+    .calendar-cell img { max-width: 100%; max-height: 60px; border-radius: 8px; margin-bottom: 4px; }
+    .calendar-cell .date-label { position: absolute; top: 6px; left: 8px; font-size: 0.9em; color: #fff; background: #a97c50cc; padding: 2px 7px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">Ana's Journal</div>
+    <nav class="topnav">
+      <a href="journal.html" class="nav-link">Journal</a>
+      <a href="entries.html" class="nav-link">Timeline</a>
+      <a href="calendar.html" class="nav-link active">Calendar</a>
+      <a href="about.html" class="nav-link">About</a>
+    </nav>
+  </header>
+  <main>
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <button id="prev-year" title="Previous Year">&#x276E;&#x276E;</button>
+        <button id="prev-month" title="Previous Month">&#x276E;</button>
+        <h2 id="calendar-title"></h2>
+        <button id="next-month" title="Next Month">&#x276F;</button>
+        <button id="next-year" title="Next Year">&#x276F;&#x276F;</button>
+      </div>
+      <div class="calendar-grid" id="calendar-grid"></div>
+    </div>
+  </main>
+  <script>
+    // Calendar rendering logic
+    const calendarGrid = document.getElementById('calendar-grid');
+    const calendarTitle = document.getElementById('calendar-title');
+    const prevMonthBtn = document.getElementById('prev-month');
+    const nextMonthBtn = document.getElementById('next-month');
+    const prevYearBtn = document.getElementById('prev-year');
+    const nextYearBtn = document.getElementById('next-year');
+    let currentDate = new Date();
+
+    function renderCalendar(date) {
+      calendarGrid.innerHTML = '';
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      calendarTitle.textContent = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startDay = firstDay.getDay();
+      const daysInMonth = lastDay.getDate();
+      // Days of week
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      days.forEach(d => {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day';
+        dayDiv.textContent = d;
+        calendarGrid.appendChild(dayDiv);
+      });
+      // Empty cells before first day
+      for (let i = 0; i < startDay; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'calendar-cell';
+        calendarGrid.appendChild(empty);
+      }
+      // Entry data
+      const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+      // Date cells
+      for (let d = 1; d <= daysInMonth; d++) {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-cell';
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        // Find entries for this date
+        const entriesForDate = entries.filter(e => e.date === dateStr);
+        if (entriesForDate.length > 0 && entriesForDate[0].images && entriesForDate[0].images.length > 0) {
+          cell.style.background = `linear-gradient(rgba(255,247,240,0.82), rgba(255,247,240,0.82)), url('${entriesForDate[0].images[0]}') center/cover no-repeat`;
+        }
+        if (entriesForDate.length > 0) {
+          cell.style.cursor = 'pointer';
+          let dayNum = d; // capture the current day for the closure
+          cell.onclick = function() {
+            // Modal logic for all notes on this date
+            let modal = document.getElementById('entry-modal');
+            if (!modal) {
+              modal = document.createElement('div');
+              modal.id = 'entry-modal';
+              modal.className = 'entry-modal hidden fade-in';
+              modal.innerHTML = `
+                <div class="entry-modal-content">
+                  <span id="close-modal" class="close-modal">&times;</span>
+                  <div id="modal-entry"></div>
+                </div>
+              `;
+              document.body.appendChild(modal);
+            }
+            const closeModal = () => {
+              modal.classList.add('hidden');
+              document.body.style.overflow = '';
+            };
+            modal.querySelector('#close-modal').onclick = closeModal;
+            modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+            // Render all entries for this date as cards
+            let formattedDate = '';
+            if (dateStr) {
+              // Use local time to avoid timezone issues
+              const displayDate = new Date(year, month, dayNum);
+              formattedDate = displayDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            }
+            document.getElementById('modal-entry').innerHTML = `
+              <h2 class="modal-title">Entries for ${formattedDate}</h2>
+              <div class="entries-list">
+                ${entriesForDate.map(entry => `
+                  <div class="entry-card timeline-card">
+                    <div class="entry-header">
+                      <h3>${entry.title || '(No Title)'}</h3>
+                      <span class="entry-date">${entry.date || ''}</span>
+                      <span class="entry-mood">${entry.mood ? 'Mood: ' + entry.mood : ''}</span>
+                    </div>
+                    <div class="entry-content">${entry.content ? entry.content.replace(/<[^>]+>/g, '').split('\n')[0] : ''}</div>
+                    ${entry.images && entry.images.length > 0 ? `<div class="entry-images">${entry.images.map(src => `<img src=\"${src}\" class=\"entry-thumb\">`).join('')}</div>` : ''}
+                  </div>
+                `).join('')}
+              </div>
+            `;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+          };
+        }
+        const label = document.createElement('span');
+        label.className = 'date-label';
+        label.textContent = d;
+        cell.appendChild(label);
+        calendarGrid.appendChild(cell);
+      }
+      // Fill the rest of the grid with empty cells so the last row is complete (6 weeks x 7 days = 42 cells)
+      const totalCells = startDay + daysInMonth;
+      const extraCells = 42 - totalCells;
+      for (let i = 0; i < extraCells; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'calendar-cell';
+        calendarGrid.appendChild(empty);
+      }
+    }
+    prevMonthBtn.onclick = () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar(currentDate);
+    };
+    nextMonthBtn.onclick = () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar(currentDate);
+    };
+    prevYearBtn.onclick = () => {
+      currentDate.setFullYear(currentDate.getFullYear() - 1);
+      renderCalendar(currentDate);
+    };
+    nextYearBtn.onclick = () => {
+      currentDate.setFullYear(currentDate.getFullYear() + 1);
+      renderCalendar(currentDate);
+    };
+    renderCalendar(currentDate);
+  </script>
+</body>
+</html> 
