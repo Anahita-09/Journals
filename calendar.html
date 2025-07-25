@@ -13,9 +13,12 @@
     .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
     .calendar-day, .calendar-cell { padding: 8px; text-align: center; font-weight: bold; min-width: 0; }
     .calendar-day { background: #eee; border-radius: 8px; }
-    .calendar-cell { min-height: 90px; background: #e2b4a6; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+    .calendar-cell { min-height: 90px; background: #e2b4a6; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; transition: all 0.3s ease; }
+    .calendar-cell:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(120, 90, 70, 0.3); }
     .calendar-cell img { max-width: 100%; max-height: 60px; border-radius: 8px; margin-bottom: 4px; }
-    .calendar-cell .date-label { position: absolute; top: 6px; left: 8px; font-size: 0.9em; color: #fff; background: #a97c50cc; padding: 2px 7px; border-radius: 6px; }
+    .calendar-cell .date-label { position: absolute; top: 6px; left: 8px; font-size: 0.9em; color: #fff; background: rgba(169, 124, 80, 0.9); padding: 2px 7px; border-radius: 6px; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+    .calendar-cell.has-image { background: linear-gradient(135deg, rgba(255,247,240,0.95), rgba(255,247,240,0.85)); }
+    .calendar-cell.has-image .date-label { background: rgba(78, 52, 46, 0.9); }
   </style>
 </head>
 <body>
@@ -82,8 +85,15 @@
         const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
         // Find entries for this date
         const entriesForDate = entries.filter(e => e.date === dateStr);
-        if (entriesForDate.length > 0 && entriesForDate[0].images && entriesForDate[0].images.length > 0) {
-          cell.style.background = `linear-gradient(rgba(255,247,240,0.82), rgba(255,247,240,0.82)), url('${entriesForDate[0].images[0]}') center/cover no-repeat`;
+        if (entriesForDate.length > 0) {
+          // Check if any entry has images
+          const entryWithImage = entriesForDate.find(e => e.images && e.images.length > 0);
+          if (entryWithImage && entryWithImage.images.length > 0) {
+            cell.classList.add('has-image');
+            cell.style.background = `linear-gradient(135deg, rgba(255,247,240,0.92), rgba(255,247,240,0.88)), url('${entryWithImage.images[0]}') center/cover no-repeat`;
+            cell.style.backgroundSize = 'cover';
+            cell.style.backgroundPosition = 'center';
+          }
         }
         if (entriesForDate.length > 0) {
           cell.style.cursor = 'pointer';
@@ -126,7 +136,7 @@
                       <span class="entry-date">${entry.date || ''}</span>
                       <span class="entry-mood">${entry.mood ? 'Mood: ' + entry.mood : ''}</span>
                     </div>
-                    <div class="entry-content">${entry.content ? entry.content.replace(/<[^>]+>/g, '').split('\n')[0] : ''}</div>
+                    <div class="entry-content">${entry.content ? (() => { const temp = document.createElement('div'); temp.innerHTML = entry.content; return temp.textContent || temp.innerText || ''; })().split('\n')[0] : ''}</div>
                     ${entry.images && entry.images.length > 0 ? `<div class="entry-images">${entry.images.map(src => `<img src=\"${src}\" class=\"entry-thumb\">`).join('')}</div>` : ''}
                   </div>
                 `).join('')}
