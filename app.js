@@ -113,8 +113,24 @@ function applyFontFamily() {
     if (!fontFamilySelect || !editor) return;
     
     const selectedFont = fontFamilySelect.value;
-    // Use modern API instead of deprecated execCommand
-    document.execCommand('fontName', false, selectedFont);
+    
+    // Modern approach using selection API
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        if (!range.collapsed) {
+            // Apply to selected text
+            const span = document.createElement('span');
+            span.style.fontFamily = selectedFont;
+            range.surroundContents(span);
+        } else {
+            // Apply to current position
+            document.execCommand('fontName', false, selectedFont);
+        }
+    } else {
+        // Fallback to execCommand
+        document.execCommand('fontName', false, selectedFont);
+    }
     editor.focus();
 }
 
@@ -125,8 +141,24 @@ function applyFontSize() {
     if (!fontSizeSelect || !editor) return;
     
     const selectedSize = fontSizeSelect.value;
-    // Use modern API instead of deprecated execCommand
-    document.execCommand('fontSize', false, selectedSize);
+    
+    // Modern approach using selection API
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        if (!range.collapsed) {
+            // Apply to selected text
+            const span = document.createElement('span');
+            span.style.fontSize = selectedSize;
+            range.surroundContents(span);
+        } else {
+            // Apply to current position
+            document.execCommand('fontSize', false, selectedSize);
+        }
+    } else {
+        // Fallback to execCommand
+        document.execCommand('fontSize', false, selectedSize);
+    }
     editor.focus();
 }
 
@@ -137,24 +169,91 @@ function applyFontColor() {
     if (!fontColorInput || !editor) return;
     
     const selectedColor = fontColorInput.value;
-    // Use modern API instead of deprecated execCommand
-    document.execCommand('foreColor', false, selectedColor);
+    
+    // Modern approach using selection API
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        if (!range.collapsed) {
+            // Apply to selected text
+            const span = document.createElement('span');
+            span.style.color = selectedColor;
+            range.surroundContents(span);
+        } else {
+            // Apply to current position
+            document.execCommand('foreColor', false, selectedColor);
+        }
+    } else {
+        // Fallback to execCommand
+        document.execCommand('foreColor', false, selectedColor);
+    }
     editor.focus();
 }
 
 function toggleBold() {
-    document.execCommand('bold', false, null);
-    document.getElementById('editor').focus();
+    const editor = document.getElementById('editor');
+    if (!editor) return;
+    
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        if (!range.collapsed) {
+            // Apply to selected text
+            const strong = document.createElement('strong');
+            range.surroundContents(strong);
+        } else {
+            // Apply to current position
+            document.execCommand('bold', false, null);
+        }
+    } else {
+        // Fallback to execCommand
+        document.execCommand('bold', false, null);
+    }
+    editor.focus();
 }
 
 function toggleItalic() {
-    document.execCommand('italic', false, null);
-    document.getElementById('editor').focus();
+    const editor = document.getElementById('editor');
+    if (!editor) return;
+    
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        if (!range.collapsed) {
+            // Apply to selected text
+            const em = document.createElement('em');
+            range.surroundContents(em);
+        } else {
+            // Apply to current position
+            document.execCommand('italic', false, null);
+        }
+    } else {
+        // Fallback to execCommand
+        document.execCommand('italic', false, null);
+    }
+    editor.focus();
 }
 
 function toggleUnderline() {
-    document.execCommand('underline', false, null);
-    document.getElementById('editor').focus();
+    const editor = document.getElementById('editor');
+    if (!editor) return;
+    
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        if (!range.collapsed) {
+            // Apply to selected text
+            const u = document.createElement('u');
+            range.surroundContents(u);
+        } else {
+            // Apply to current position
+            document.execCommand('underline', false, null);
+        }
+    } else {
+        // Fallback to execCommand
+        document.execCommand('underline', false, null);
+    }
+    editor.focus();
 }
 
 function handleImageUpload(event) {
